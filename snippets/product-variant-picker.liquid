@@ -42,6 +42,44 @@
             picker_type: picker_type
           %}
         </fieldset>
+        
+        <script>
+          function swatchModelViewerClickHandler () {
+            var checked = document.querySelector("variant-selects fieldset:nth-child(1) input:checked");
+            var value = checked.value.toLowerCase();
+
+            if( value == "brass" ) {
+              var colorArray = [.78,.69,.07,1];
+            } else if(value == "925 sterling silver") {
+              var colorArray = [.75,.76,.80,1];
+            } else if(value == "14k yellow gold") {
+              var colorArray = [.89,.74,.395,1];
+            } else if(value == "24k yellow gold") {
+              var colorArray = [.92,.42,.01,1];
+            } else if(value == "14k white gold") {
+              var colorArray = [1,.98,.945,1];
+            } else if(value == "14k rose gold") {
+              var colorArray = [.80,.45,.45,1];
+            } else {
+              var colorArray = [{{swatch.color.red | divided_by: 255.0}},{{swatch.color.green | divided_by: 255.0}},{{swatch.color.blue | divided_by: 255.0}},1]
+            }
+
+            try {
+              var pbr = document.querySelector("model-viewer").model.materials[0].pbrMetallicRoughness;
+              pbr.setMetallicFactor(1);
+              pbr.setRoughnessFactor(.1);
+              pbr.setBaseColorFactor(colorArray);
+            } catch (error) {
+              var mg = document.querySelector("product-model button").click();
+              setTimeout(swatchModelViewerClickHandler, 50);
+            }
+          }
+          document.querySelector('#variant-selects-{{ section.id }}').addEventListener('click', swatchModelViewerClickHandler, false);
+          window.addEventListener('DOMContentLoaded',(event)=>{
+            swatchModelViewerClickHandler();
+          });
+
+        </script>
       {%- elsif picker_type == 'button' -%}
         <fieldset class="js product-form__input product-form__input--pill">
           <legend class="form__label">{{ option.name }}</legend>
